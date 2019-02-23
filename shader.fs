@@ -1,9 +1,9 @@
+precision mediump float;
 varying vec3 rayDir;
 varying vec4 vColor;
 #define PI 3.14159
 #define nbSphere 3
-#define nbSource 2
-precision mediump float;
+#define nbSource 1
 // =============================================================================================================
 
 
@@ -90,9 +90,9 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
  void initializeSpheres(inout Sphere sphereTab[nbSphere]){
 	vec3 color1 = vec3(1.0, 0.6, 0.0);
 	Material material1 = Material(vec3(1.0,1.0,1.0),0.46,60.0, color1);
-	sphereTab[0] = Sphere(vec3(-0.0,200.0,0.0),50.0, material1, -1.0);
-	sphereTab[1] = Sphere(vec3(-60.0,400.0,50.0),10.0, material1, -1.0);
-	sphereTab[2] = Sphere(vec3(10.0,400.0,20.0),10.0, material1, -1.0);
+	sphereTab[0] = Sphere(vec3(-0.0,350.0,0.0),0.0, material1, -1.0);
+	sphereTab[1] = Sphere(vec3(-60.0,300.0,50.0),50.0, material1, -1.0);
+	sphereTab[2] = Sphere(vec3(60.0,300.0,50.0),50.0, material1, -1.0);
 }
 // =============================================================================================================
 
@@ -102,8 +102,8 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
 
 // =============================================================================================================
 void initializeSources(inout Source sourceTab[nbSource]){
-	sourceTab[0] = Source(vec3(250.0,200.0,-1000.0),vec3(1.0,1.0,1.0));
-	sourceTab[1] = Source(vec3(500.0,-200.0,100.0),vec3(1.0,1.0,1.0));
+	sourceTab[0] = Source(vec3(-60.0,-300.0,50.0),vec3(1.0,1.0,1.0));
+	
 }
 // =============================================================================================================
 
@@ -112,7 +112,7 @@ void initializeSources(inout Source sourceTab[nbSource]){
 
 
 // =============================================================================================================
-void displayScene(Ray r,in Sphere sphereTab[nbSphere],in Source sourceTab[2]){
+void displayScene(Ray r,in Sphere sphereTab[nbSphere],in Source sourceTab[nbSource]){
 	vec3 phongvar;
 	vec3 newPhong;
 	float tmin = -1.0;
