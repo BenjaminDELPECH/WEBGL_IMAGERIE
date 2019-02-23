@@ -1,12 +1,15 @@
-
-// ======================================================= structure de donnée ======================================================
-#define PI 3.14159265359
-#define nbSphere 2
-#define nbSource 2;
-precision mediump float;
 varying vec3 rayDir;
 varying vec4 vColor;
+#define PI 3.14159
+#define nbSphere 3
+#define nbSource 2
+precision mediump float;
+// =============================================================================================================
 
+
+
+
+// =============================================================================================================
 struct Ray {
 	vec3 o, v;
 	float t;
@@ -30,10 +33,12 @@ struct Sphere {
 	Material mat;
 	float tmin;
 };
+// =============================================================================================================
 
 
-// ======================================================= fonction intersectSphere ======================================================
 
+
+// =============================================================================================================
 float intesectSphere(Ray r, Sphere s)
 {	
 	vec3 oc = r.o - s.c;
@@ -52,6 +57,9 @@ float intesectSphere(Ray r, Sphere s)
 		else return t2;
 	}
 }
+// =============================================================================================================
+
+
 
 
 
@@ -72,79 +80,82 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
 	
 	return phong;
 }
+// =============================================================================================================
+
+
+
+
+
+// =============================================================================================================
+ void initializeSpheres(inout Sphere sphereTab[nbSphere]){
+	vec3 color1 = vec3(1.0, 0.6, 0.0);
+	Material material1 = Material(vec3(1.0,1.0,1.0),0.46,60.0, color1);
+	sphereTab[0] = Sphere(vec3(-0.0,200.0,0.0),50.0, material1, -1.0);
+	sphereTab[1] = Sphere(vec3(-60.0,400.0,50.0),10.0, material1, -1.0);
+	sphereTab[2] = Sphere(vec3(10.0,400.0,20.0),10.0, material1, -1.0);
+}
+// =============================================================================================================
+
+
+
+
+
+// =============================================================================================================
+void initializeSources(inout Source sourceTab[nbSource]){
+	sourceTab[0] = Source(vec3(250.0,200.0,-1000.0),vec3(1.0,1.0,1.0));
+	sourceTab[1] = Source(vec3(500.0,-200.0,100.0),vec3(1.0,1.0,1.0));
+}
+// =============================================================================================================
+
+
+
+
+
+// =============================================================================================================
+void displayScene(Ray r,in Sphere sphereTab[nbSphere],in Source sourceTab[2]){
+	vec3 phongvar;
+	vec3 newPhong;
+	float tmin = -1.0;
+	for(int i=0;i< nbSphere;i++)
+	{
+		float k = float(i);
+		// vec3 color1 = vec3(1.0, 1.0, 1.0);
+		// Material material1 = Material(vec3(1.0,1.0,1.0),0.06,130.0, color1);
+		// sphereTab[i] = Sphere(vec3(1.2*k*2.0,k*220.0,20.0),20.0,  material1, -1.0);
+		r.t = intesectSphere(r,sphereTab[i]);
+		if(r.t > 0.0){
+			if(tmin < 0.0 || (r.t < tmin)){
+				tmin = r.t;
+				sphereTab[i].tmin = tmin;
+				phongvar = vec3(0.0,0.0,0.0);
+				newPhong = vec3(0.0,0.0,0.0);
+				for(int j=0;j< 2 ;j++)
+				{
+					newPhong = phong(sphereTab[i], r, sourceTab[j]);
+					if(newPhong.x > 0.0){
+						phongvar += newPhong;
+					}
+				}
+				gl_FragColor = vec4(phongvar * sphereTab[i].mat.color, 1.0);
+			}
+		}
+	}
+}
+// =============================================================================================================
+
+
 
 
 
 // ======================================================= main ======================================================
 void main(void) {
 	gl_FragColor = vec4(0.0,0.0,0.0,1.0);
-
-
-	Sphere sphereTab[100];
-	Source sourceTab[2];
-
-	vec4 colors[20];
-	
-	
-	
-	
-	
-	
-	vec3 color1 = vec3(1.0, 1.0, 1.0);
-
-	Material material1 = Material(vec3(1.0,1.0,1.0),0.06,130.0, color1);
-
-	sphereTab[0] = Sphere(vec3(-0.0,200.0,0.0),30.0, material1, -1.0);
-	sphereTab[1] = Sphere(vec3(-60.0,400.0,50.0),10.0, material1, -1.0);
-	sphereTab[2] = Sphere(vec3(10.0,400.0,20.0),10.0, material1, -1.0);
-	
-	sourceTab[0] = Source(vec3(250.0,-200.0,-1000.0),vec3(1.0,1.0,1.0));
-	sourceTab[1] = Source(vec3(500.0,-200.0,100.0),vec3(1.0,1.0,1.0));
-	vec3 phongvar;
-	vec3 newPhong;
-
-	Sphere theSphere;
-	
 	Ray r = Ray(vec3(0.0,0.0,0.0), rayDir,-1.0);
+	Sphere sphereTab[nbSphere];
+	Source sourceTab[nbSource];
 	
-	float tmin = -1.0;
-	for(int i=0;i< 20;i++)
-	{
-		float k = float(i);
-		// sphereTab[i] = Sphere(vec3(1.2*k*2.0,k*220.0,20.0),20.0,  material1, -1.0);
-		r.t = intesectSphere(r,sphereTab[i]);
-
-		if(r.t > 0.0){
-			if(tmin < 0.0 || (r.t < tmin)){
-				tmin = r.t;
-				sphereTab[i].tmin = tmin;
-
-				phongvar = vec3(0.0,0.0,0.0);
-				newPhong = vec3(0.0,0.0,0.0);
-				for(int j=0;j< 2 ;j++)
-				{
-					newPhong = phong(sphereTab[i], r, sourceTab[j]);
-					
-					if(newPhong.x > 0.0){
-					phongvar += newPhong;
-					}
-					
-
-					
-					
-				}
-				
-				gl_FragColor = vec4(sphereTab[i].mat.color * phongvar, 1.0);
-				
-				
-		
-			}
-		}
-
-	}
-
-
-	
-
+	initializeSpheres(sphereTab);
+	initializeSources(sourceTab);
+	displayScene(r, sphereTab, sourceTab);
 }
-
+// =============================================================================================================
