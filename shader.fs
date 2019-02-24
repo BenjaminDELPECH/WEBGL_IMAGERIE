@@ -96,7 +96,7 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
  void initializeSpheres(inout Sphere sphereTab[nbSphere]){
 	vec3 color1 = vec3(1.0, 0.6, 0.0);
 	Material material1 = Material(ks,kd,n, color1);
-	sphereTab[0] = Sphere(vec3(-0.0,350.0,0.0),0.0, material1, -1.0);
+	sphereTab[0] = Sphere(vec3(-0.0,600.0,0.0),50.0, material1, -1.0);
 	sphereTab[1] = Sphere(vec3(-100.0,300.0,50.0),50.0, material1, -1.0);
 	sphereTab[2] = Sphere(vec3(100.0,300.0,50.0),50.0, material1, -1.0);
 
