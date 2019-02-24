@@ -1,4 +1,3 @@
-
 // =====================================================
 var gl;
 var shadersLoaded = 0;
@@ -10,7 +9,6 @@ var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 var objMatrix = mat4.create();
 mat4.identity(objMatrix);
-
 
 
 // =====================================================
@@ -27,13 +25,12 @@ function webGLStart() {
 	gl.clearColor(0.7, 0.7, 0.7, 1.0);
 	gl.enable(gl.DEPTH_TEST);
 
-//	drawScene();
+	//	drawScene();
 	tick();
 }
 
 // =====================================================
-function initGL(canvas)
-{
+function initGL(canvas) {
 	try {
 		gl = canvas.getContext("experimental-webgl");
 		gl.viewportWidth = canvas.width;
@@ -50,11 +47,11 @@ function initBuffers() {
 	vertexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 	vertices = [
-							-1.0, -1.0, 0.0,
-							-1.0,  1.0, 0.0,
-							 1.0,  1.0, 0.0,
-							 1.0, -1.0, 0.0
-							];
+		-1.0, -1.0, 0.0,
+		-1.0, 1.0, 0.0,
+		1.0, 1.0, 0.0,
+		1.0, -1.0, 0.0
+	];
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 	vertexBuffer.itemSize = 3;
 	vertexBuffer.numItems = 4;
@@ -63,29 +60,35 @@ function initBuffers() {
 
 // =====================================================
 function loadShaders(shader) {
-	loadShaderText(shader,'.vs');
-	loadShaderText(shader,'.fs');
+	loadShaderText(shader, '.vs');
+	loadShaderText(shader, '.fs');
 }
 
 // =====================================================
-function loadShaderText(filename,ext) {   // technique car lecture asynchrone...
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (xhttp.readyState == 4 && xhttp.status == 200) {
-			if(ext=='.vs') { vertShaderTxt = xhttp.responseText; shadersLoaded ++; }
-			if(ext=='.fs') { fragShaderTxt = xhttp.responseText; shadersLoaded ++; }
-			if(shadersLoaded==2) {
-				initShaders(vertShaderTxt,fragShaderTxt);
-				shadersLoaded=0;
+function loadShaderText(filename, ext) { // technique car lecture asynchrone...
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function () {
+		if (xhttp.readyState == 4 && xhttp.status == 200) {
+			if (ext == '.vs') {
+				vertShaderTxt = xhttp.responseText;
+				shadersLoaded++;
 			}
-    }
-  }
-  xhttp.open("GET", filename+ext, true);
-  xhttp.send();
+			if (ext == '.fs') {
+				fragShaderTxt = xhttp.responseText;
+				shadersLoaded++;
+			}
+			if (shadersLoaded == 2) {
+				initShaders(vertShaderTxt, fragShaderTxt);
+				shadersLoaded = 0;
+			}
+		}
+	}
+	xhttp.open("GET", filename + ext, true);
+	xhttp.send();
 }
 
 // =====================================================
-function initShaders(vShaderTxt,fShaderTxt) {
+function initShaders(vShaderTxt, fShaderTxt) {
 
 	vshader = gl.createShader(gl.VERTEX_SHADER);
 	gl.shaderSource(vshader, vShaderTxt);
@@ -120,33 +123,67 @@ function initShaders(vShaderTxt,fShaderTxt) {
 
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+
+	shaderProgram.n = gl.getUniformLocation(shaderProgram, "n");
+	gl.uniform1f(shaderProgram.n, 100.0);
+
+	shaderProgram.ks = gl.getUniformLocation(shaderProgram, "ks");
+	gl.uniform1f(shaderProgram.ks, 1.0);
+
+	shaderProgram.kd = gl.getUniformLocation(shaderProgram, "kd");
+	gl.uniform1f(shaderProgram.kd, 0.20);
 }
 
 
 // =====================================================
 function setMatrixUniforms() {
-	if(shaderProgram != null) {
+	if (shaderProgram != null) {
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
 	}
 }
 
-// =====================================================
+
 function drawScene() {
 	gl.clear(gl.COLOR_BUFFER_BIT);
 
-	if(shaderProgram != null) {
+	if (shaderProgram != null) {
 		gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
-      vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
+			vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-			mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 100.0, pMatrix);
-			mat4.identity(mvMatrix);
-			mat4.translate(mvMatrix, [0.0, 0.0, -2.0]);
-			mat4.multiply(mvMatrix, objMatrix);
+		mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 200.0, pMatrix);
+		mat4.identity(mvMatrix);
+		mat4.translate(mvMatrix, [0.0, 0.0, -2.0]);
+		mat4.multiply(mvMatrix, objMatrix);
 
-			setMatrixUniforms();
 
-			gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexBuffer.numItems);
+
+
+
+		gl.drawArrays(gl.TRIANGLE_FAN, 0, vertexBuffer.numItems);
 	}
 }
+
+$(document).ready(function () {
+	var test = $("#sliderN").val();
+	$("#labelN").html(test);
+	$("#sliderN").on("change mousemove", function () {
+		$("#labelN").html(this.value);
+		gl.uniform1f(shaderProgram.n, this.value);
+	});
+
+	var test2 = $("#sliderKs").val();
+	$("#labelKs").html(test2);
+	$("#sliderKs").on("change mousemove", function () {
+		$("#labelKs").html(this.value);
+		gl.uniform1f(shaderProgram.ks, this.value);
+	});
+
+	var test3 = $("#sliderKd").val();
+	$("#labelKd").html(test3);
+	$("#sliderKd").on("change mousemove", function () {
+		$("#labelKd").html(this.value);
+		gl.uniform1f(shaderProgram.kd, this.value);
+	});
+});

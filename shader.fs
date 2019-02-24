@@ -1,9 +1,15 @@
 precision mediump float;
 varying vec3 rayDir;
 varying vec4 vColor;
+
+uniform float n;
+uniform float kd;
+uniform float ks;
+
+
 #define PI 3.14159
 #define nbSphere 3
-#define nbSource 1
+#define nbSource 2
 // =============================================================================================================
 
 
@@ -21,7 +27,7 @@ struct Source {
 };
 
 struct Material{
-	vec3 kd;
+	float kd;
 	float ks;
 	float n;
 	vec3 color;
@@ -66,7 +72,7 @@ float intesectSphere(Ray r, Sphere s)
 //====================phong======================================
 vec3 phong(Sphere sphere, Ray ray, Source source){
 	
-	vec3 kd = sphere.mat.kd;
+	float kd = sphere.mat.kd;
 	float ks = sphere.mat.ks;
 	float n = sphere.mat.n;
 	vec3 color = sphere.mat.color;
@@ -89,10 +95,11 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
 // =============================================================================================================
  void initializeSpheres(inout Sphere sphereTab[nbSphere]){
 	vec3 color1 = vec3(1.0, 0.6, 0.0);
-	Material material1 = Material(vec3(1.0,1.0,1.0),0.46,60.0, color1);
+	Material material1 = Material(ks,kd,n, color1);
 	sphereTab[0] = Sphere(vec3(-0.0,350.0,0.0),0.0, material1, -1.0);
-	sphereTab[1] = Sphere(vec3(-60.0,300.0,50.0),50.0, material1, -1.0);
-	sphereTab[2] = Sphere(vec3(60.0,300.0,50.0),50.0, material1, -1.0);
+	sphereTab[1] = Sphere(vec3(-100.0,300.0,50.0),50.0, material1, -1.0);
+	sphereTab[2] = Sphere(vec3(100.0,300.0,50.0),50.0, material1, -1.0);
+
 }
 // =============================================================================================================
 
@@ -102,7 +109,8 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
 
 // =============================================================================================================
 void initializeSources(inout Source sourceTab[nbSource]){
-	sourceTab[0] = Source(vec3(-60.0,-300.0,50.0),vec3(1.0,1.0,1.0));
+	sourceTab[0] = Source(vec3(20.0,295.0,50.0),vec3(1.0,1.0,1.0));
+	sourceTab[1] = Source(vec3(20.0,295.0,-250.0),vec3(1.0,1.0,1.0));
 	
 }
 // =============================================================================================================
