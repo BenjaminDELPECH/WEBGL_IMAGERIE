@@ -1,3 +1,5 @@
+//  DEFINITION DES VARIABLES
+// =============================================================================================================
 precision mediump float;
 varying vec3 rayDir;
 varying vec4 vColor;
@@ -14,7 +16,7 @@ uniform float ks;
 
 
 
-
+//DEFINITION DES STRUCURES (Rayon,source materiau et sphere)
 // =============================================================================================================
 struct Ray {
 	vec3 o, v;
@@ -43,7 +45,7 @@ struct Sphere {
 
 
 
-
+//FONCTION POUR CALCULER L'INTERSECTION DE LA SPHERE ET DU RAYON (On retourne t1 ou t2)
 // =============================================================================================================
 float intesectSphere(Ray r, Sphere s)
 {	
@@ -68,7 +70,7 @@ float intesectSphere(Ray r, Sphere s)
 
 
 
-
+//FONCTION POUR CALCULER LE PHONG MODIFIE 
 //====================phong======================================
 vec3 phong(Sphere sphere, Ray ray, Source source){
 	
@@ -91,7 +93,7 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
 
 
 
-
+//FONCTION POUR INITIALISER LES SPHERES,ON DEFINIT LE NOMBRE DE SPHERE AINSI QUE LEUR COULEUR
 // =============================================================================================================
  void initializeSpheres(inout Sphere sphereTab[nbSphere]){
 	vec3 color1 = vec3(1.0, 0.6, 0.0);
@@ -106,7 +108,7 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
 
 
 
-
+//FONCTION POUR INITIALISER LA OU LES SOURCES DE LUMIERES
 // =============================================================================================================
 void initializeSources(inout Source sourceTab[nbSource]){
 	sourceTab[0] = Source(vec3(20.0,295.0,50.0),vec3(1.0,1.0,1.0));
@@ -118,7 +120,7 @@ void initializeSources(inout Source sourceTab[nbSource]){
 
 
 
-
+//FONCTION POUR AFFICHER LA SCENE A PARTIR DU RAYON,DU TABLEAU DE SPHERE ET DES SOURCES
 // =============================================================================================================
 void displayScene(Ray r,in Sphere sphereTab[nbSphere],in Source sourceTab[nbSource]){
 	vec3 phongvar;
@@ -154,7 +156,7 @@ void displayScene(Ray r,in Sphere sphereTab[nbSphere],in Source sourceTab[nbSour
 
 
 
-
+//on initialise la couleur du fond de notre canvas avec fragcolor, puis on definit un rayon, on cree ensuite un tableau de sphere a partir du nombre de spheres puis un tableau de sources a partir du nombre de sources, ensuite on appelle les fonction d'initialisation de sphere et de source puis on affiche la scene avec nos spheres eclairees
 // ======================================================= main ======================================================
 void main(void) {
 	gl_FragColor = vec4(0.0,0.0,0.0,1.0);
