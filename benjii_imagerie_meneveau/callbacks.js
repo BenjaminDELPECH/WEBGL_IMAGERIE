@@ -65,9 +65,9 @@ function handleMouseMove(event) {
 	rotX += degToRad(depY / 2);
 	
 	// Construire une matrice de rotation (regardez objMatrix)
-	// mat4.identity(objMatrix);
-	// mat4.rotate(objMatrix ,rotY, [0,1,0]);
-	// mat4.rotate(objMatrix ,rotX, [1,0,0]);
+	mat4.identity(objMatrix);
+	mat4.rotate(objMatrix ,rotY, [0,1,0]);
+	mat4.rotate(objMatrix ,rotX, [1,0,0]);
 	
 	// Attention les angles doivent être donnés en radians
 

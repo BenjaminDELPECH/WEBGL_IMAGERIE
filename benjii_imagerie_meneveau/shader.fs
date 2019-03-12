@@ -11,7 +11,7 @@ uniform float ks;
 
 #define PI 3.14159
 #define nbSphere 5
-#define nbSource 1
+#define nbSource 2
 #define nbPlan 2
 // =============================================================================================================
 
@@ -117,7 +117,9 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
     vec3 Vi=(normalize(source.pos-I));
     vec3 Vo=(-ray.o * ray.v);
     vec3 H=(normalize(Vi+Vo));
-    vec3 phong = source.POW * ((kd/PI)+(ks*((n+8.0)/(8.0*PI)))*pow(dot(N,H),n))*dot(N,Vi);
+    float cos_theta = max(0.0, dot(N,Vi));
+    float cos_alpha = max(0.0, dot(N, H));
+    vec3 phong = 1.8*source.POW * ((kd/PI)+(ks*((n+8.0)/(8.0*PI)))*pow(cos_alpha,n))*cos_theta;
 
     return phong;
 }
@@ -131,9 +133,8 @@ vec3 phong(Sphere sphere, Ray ray, Source source){
 void initializePlans(inout Plan planTab[nbPlan]){
 
     vec3 color1 = vec3(0.0, 1.0, 0.6);
-
     vec3 color2 = vec3(0.0,0.0,1.0);
-    planTab[0] = Plan(vec3(0.0,600.0,50.0),vec3(1.0,100.0,100.0),color1);
+    planTab[0] = Plan(vec3(60.0,600.0,50.0),vec3(1.0,100.0,100.0),color1);
     planTab[1] = Plan(vec3(100.0,300.0,50.0),vec3(0.600,1.0,0.0),color2);
 
 
@@ -146,8 +147,10 @@ void initializePlans(inout Plan planTab[nbPlan]){
 void initializeSpheres(inout Sphere sphereTab[nbSphere]){
     vec3 color1 = vec3(1.0, 0.6, 0.0);
     Material material1 = Material(ks,kd,n, color1);
-    sphereTab[0] = Sphere(vec3(45.0,370.0,0.0),5.0, material1, 0.0);
-    sphereTab[1] = Sphere(vec3(90.0,400.0,0.0),46.0, material1, 0.0);
+    sphereTab[0] = Sphere(vec3(-20.0,380.0,10.0),10.0, material1, 0.0);
+    sphereTab[1] = Sphere(vec3(0.0,330.0,0.0),10.0, material1, 0.0);
+
+    sphereTab[2] = Sphere(vec3(90.0,400.0,0.0),76.0, material1, 0.0);
     
     
 }
@@ -159,14 +162,16 @@ void initializeSpheres(inout Sphere sphereTab[nbSphere]){
 //FONCTION POUR INITIALISER LA OU LES SOURCES DE LUMIERES
 // =============================================================================================================
 void initializeSources(inout Source sourceTab[nbSource]){
-    sourceTab[0] = Source(vec3(-5.0,0.0,0.0),vec3(1.0,1.0,1.0));
+    sourceTab[0] = Source(vec3(-500.0,0.0,0.0),vec3(1.0,1.0,1.0));
+    sourceTab[1] = Source(vec3(-200.0,150.0,-30.0),vec3(1.0,1.0,1.0));
+    
 }
 // =============================================================================================================
 
 
 //FONCTION POUR AFFICHER LA SCENE A PARTIR DU RAYON,DU TABLEAU DE SPHERE ET DES SOURCES
 // =============================================================================================================
-void Illumination(Ray r, in Sphere sphereTab[nbSphere], in Plan planTab[nbPlan], in Source sourceTab[nbSource]){
+vec4 Illumination(Ray r, in Sphere sphereTab[nbSphere], in Plan planTab[nbPlan], in Source sourceTab[nbSource]){
     vec3 phongvar;
     vec3 newPhong;
     float tmin = -1.0;
@@ -187,15 +192,17 @@ void Illumination(Ray r, in Sphere sphereTab[nbSphere], in Plan planTab[nbPlan],
                 for(int j=0; j< nbSource ;j++)
                 {
                     //OMBRE
+                    int compteur = 0;
                     I = r.o+(sphereTab[i].t*r.v);
                     vec3 N =(normalize(I-sphereTab[i].c));
-                    I+=0.005*N;
-                    retourRayon = Ray(I, sourceTab[j].pos, 1.0);
+                    I=I + 0.010*N;
+
+                    retourRayon = Ray(I, sourceTab[j].pos, 0.0);
                     ombre = false;
                     for(int k=0;k< nbSphere;k++)
                     {   
                         t = intesectSphere(retourRayon,sphereTab[k]);
-                        if(t > 0.15){
+                        if(t > 0.015 && t < 1.0000){
                              ombre = true;
                         }
                     }
@@ -205,7 +212,7 @@ void Illumination(Ray r, in Sphere sphereTab[nbSphere], in Plan planTab[nbPlan],
                     }
                 }
             }
-            gl_FragColor = vec4(phongvar * sphereTab[i].mat.color, 1.0);
+            return vec4(phongvar * sphereTab[i].mat.color, 1.0);
         }
     }
 }
@@ -226,6 +233,7 @@ void main(void) {
     initializePlans(planTab);
     initializeSpheres(sphereTab);
     initializeSources(sourceTab);
-    Illumination(r, sphereTab,planTab, sourceTab);
+    
+    gl_FragColor = Illumination(r, sphereTab,planTab, sourceTab);
 }
 // =============================================================================================================
