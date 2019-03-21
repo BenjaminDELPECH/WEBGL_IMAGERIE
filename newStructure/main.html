@@ -19,6 +19,7 @@
 			color:white;">
 
 		<div style="width:100%;margin:auto;display:flex;flex-flow:wrap;width:900px;">
+
 			<div style="width:100%;display:flex;">
 				<canvas id="WebGL-test" style="border:none;margin:auto;border:1px solid
 						#222222;" width="900" height="600"></canvas>
@@ -32,7 +33,7 @@
 				</div>
 				<div style="margin:2em auto;">
 					<div>Ks</div>
-					<input id="sliderKs" type="range" min="0.0" max="2.0" step="0.1" value="1.0" />
+					<input id="sliderKs" type="range" min="0.0" max="10.0" step="0.1" value="2.5" />
 					<p>Value: <span id="labelKs"></span></p>
 				</div>
 				<div style="margin:2em auto;">
@@ -41,30 +42,14 @@
 					<p>Value: <span id="labelKd"></span></p>
 				</div>
 			</div>
-			<!-- PLAN -->
 			<div style="width:100%;display:flex;">
 				<div style="margin:2em auto;">
-					<div>plan X</div>
-					<input id="sliderPlanX" type="range" min="-180" max="180" value="0" />
-					<p>Value: <span id="labelPlanX"></span></p>
+					<div>Moove the Ball</div>
+					<input id="sliderSphere3" type="range" min="15" max="35" step="0.1" value="25" />
+					<p>Value: <span id="labelSphere3"></span></p>
 				</div>
-				<div style="margin:2em auto;">
-					<div>plan Y</div>
-					<input id="sliderPlanY" type="range" min="-180" max="180" value="0" />
-					<p>Value: <span id="labelPlanY"></span></p>
-				</div>
-				<div style="margin:2em auto;">
-					<div>plan Z</div>
-					<input id="sliderPlanZ" type="range" min="-180" max="180" value="0" />
-					<p>Value: <span id="labelPlanZ"></span></p>
-				</div>
-				<div style="margin:2em auto;">
-					<div>plan D</div>
-					<input id="sliderPlanD" type="range" min="0" max="1" value="0" step="0.01" />
-					<p>Value: <span id="labelPlanD"></span></p>
-				</div>
-				
 			</div>
+
 		</div>
 </body>
 

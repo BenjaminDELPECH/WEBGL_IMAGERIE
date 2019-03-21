@@ -128,22 +128,14 @@ function initShaders(vShaderTxt, fShaderTxt) {
 	gl.uniform1f(shaderProgram.n, 100.0);
 
 	shaderProgram.ks = gl.getUniformLocation(shaderProgram, "ks");
-	gl.uniform1f(shaderProgram.ks, 1.5);
+	gl.uniform1f(shaderProgram.ks, 2.5);
 
 	shaderProgram.kd = gl.getUniformLocation(shaderProgram, "kd");
 	gl.uniform1f(shaderProgram.kd, 0.20);
 
-	shaderProgram.planX = gl.getUniformLocation(shaderProgram, "planX");
-	gl.uniform1f(shaderProgram.planX, 10.0);
-
-	shaderProgram.planY = gl.getUniformLocation(shaderProgram, "planY");
-	gl.uniform1f(shaderProgram.planY, 10.0);
-
-	shaderProgram.planZ = gl.getUniformLocation(shaderProgram, "planZ");
-	gl.uniform1f(shaderProgram.planZ, 10.0);
-
-	shaderProgram.planD = gl.getUniformLocation(shaderProgram, "planD");
-	gl.uniform1f(shaderProgram.planD, 10.0);
+	
+	shaderProgram.sphere3Y = gl.getUniformLocation(shaderProgram, "sphere3Y");
+	gl.uniform1f(shaderProgram.sphere3Y, 25);
 }
 
 
@@ -199,34 +191,11 @@ $(document).ready(function () {
 		gl.uniform1f(shaderProgram.kd, this.value);
 	});
 
-
-	////PLAN//////////////
-	var pX_val = $("#sliderPlanX").val();
-	$("#labelPlanX").html(pX_val);
-	$("#sliderPlanX").on("change mousemove", function () {
-		$("#labelPlanX").html(this.value);
-		console.log(this.value);
-		gl.uniform1f(shaderProgram.planX, this.value);
+	var test4 = $("#sliderSphere3").val();
+	$("#labelSphere3").html(test4);
+	$("#sliderSphere3").on("change mousemove", function () {
+		$("#labelSphere3").html(this.value);
+		gl.uniform1f(shaderProgram.sphere3Y, this.value);
 	});
 
-	var pY_val = $("#sliderPlanY").val();
-	$("#labelPlanY").html(pY_val);
-	$("#sliderPlanY").on("change mousemove", function () {
-		$("#labelPlanY").html(this.value);
-		gl.uniform1f(shaderProgram.planY, this.value);
-	});
-
-	var pZ_val = $("#sliderPlanZ").val();
-	$("#labelPlanZ").html(pZ_val);
-	$("#sliderPlanZ").on("change mousemove", function () {
-		$("#labelPlanZ").html(this.value);
-		gl.uniform1f(shaderProgram.planZ, this.value);
-	});
-
-	var pD_val = $("#sliderPlanD").val();
-	$("#labelPlanD").html(pD_val );
-	$("#sliderPlanD").on("change mousemove", function () {
-		$("#labelPlanD").html(this.value);
-		gl.uniform1f(shaderProgram.planD, this.value);
-	});
 });

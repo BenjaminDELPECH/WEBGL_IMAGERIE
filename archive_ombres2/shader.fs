@@ -167,7 +167,7 @@ void illumineOmbre(inout vec3 phongvar,in Ray r,in Sphere sphereTab[nbSphere],in
     {
         vec3 I=r.o+(r.t*r.v);
         I=I+.010*r.N;
-        Ray retourRayon=Ray(I,sourceTab[j].pos,r.N,0.,r.mat);
+        Ray retourRayon=Ray(I,sourceTab[j].pos,vec3(0.),0.,r.mat);
         ombre=false;
         for(int k=0;k<nbSphere;k++)
         {
