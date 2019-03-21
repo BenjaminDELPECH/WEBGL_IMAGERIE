@@ -82,7 +82,7 @@ function loadShaderText(filename, ext) { // technique car lecture asynchrone...
 				shadersLoaded = 0;
 			}
 		}
-	}
+	};
 	xhttp.open("GET", filename + ext, true);
 	xhttp.send();
 }
@@ -133,7 +133,7 @@ function initShaders(vShaderTxt, fShaderTxt) {
 	shaderProgram.kd = gl.getUniformLocation(shaderProgram, "kd");
 	gl.uniform1f(shaderProgram.kd, 0.20);
 
-	
+
 	shaderProgram.sphere3Y = gl.getUniformLocation(shaderProgram, "sphere3Y");
 	gl.uniform1f(shaderProgram.sphere3Y, 25);
 }
@@ -194,6 +194,7 @@ $(document).ready(function () {
 	var test4 = $("#sliderSphere3").val();
 	$("#labelSphere3").html(test4);
 	$("#sliderSphere3").on("change mousemove", function () {
+		gl.uniform1f(shaderProgram.sphere3Y, 25);
 		$("#labelSphere3").html(this.value);
 		gl.uniform1f(shaderProgram.sphere3Y, this.value);
 	});
