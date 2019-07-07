@@ -1,11 +1,16 @@
 precision mediump float;
+
 varying vec3 rayDir;
 varying vec4 vColor;
+
 uniform float n;
 uniform float kd;
 uniform float ks;
 uniform float sphere3Y;
+
+
 #define PI 3.14159
+
 #define nbSphere 3
 #define nbSource 2
 #define nbPlan 3
@@ -18,6 +23,8 @@ struct Material
     float n;
     vec3 color;
 };
+
+
 struct Ray{
     vec3 o,v;
     float t;
@@ -26,24 +33,30 @@ struct Ray{
     vec3 N;
     Material mat;
 };
+
+
 struct Plan
 {
     vec3 pos;
     vec3 N;
     Material mat;
 };
+
+
 struct Sphere{
     vec3 c;
     float r;
     Material mat;
 };
+
+
 struct Source
 {
     vec3 pos;
     vec3 POW;
 };
 
-// initalisations==================================================
+// initalisations==============================================================================================================
 void initializePlans(inout Plan planTab[nbPlan])
 {
     vec3 color1=vec3(.6,.6,.6);
@@ -53,7 +66,7 @@ void initializePlans(inout Plan planTab[nbPlan])
     planTab[2]=Plan(vec3(-20.,100.,0.),vec3(-360.,-60.,-0.),material1);
 }
 
-// initalisations==================================================
+// initalisations=============================================================================================================
 void initializeSpheres(inout Sphere sphereTab[nbSphere])
 {
     vec3 color1=vec3(.9,0.,0.);
@@ -64,21 +77,23 @@ void initializeSpheres(inout Sphere sphereTab[nbSphere])
     
 }
 
-// initalisations==================================================
+// initalisations=============================================================================================================
 void initializeSources(inout Source sourceTab[nbSource])
 {
     sourceTab[0]=Source(vec3(30.,0.,40.),vec3(.5,.5,.5));
     sourceTab[1]=Source(vec3(60.,0.,10.),vec3(.5,.5,.5));
 }
 
-// initalisations==================================================
+// initalisations==============================================================================================================
 void initializeScene(inout Plan planTab[nbPlan],inout Sphere sphereTab[nbSphere],inout Source sourceTab[nbSource]){
     initializePlans(planTab);
     initializeSpheres(sphereTab);
     initializeSources(sourceTab);
 }
 
-// phong==================================================
+
+
+// phong=======================================================================================================================
 vec3 phong(Ray r,Source source)
 {
     vec3 I=r.o+(r.t*r.v);
@@ -92,14 +107,14 @@ vec3 phong(Ray r,Source source)
     return phong;
 }
 
-// Intersection avec une Sphere==================================================
+// Intersection avec une Sphere================================================================================================
 float intersectSphere(inout Ray r,Sphere s){
     vec3 oc=r.o-s.c;
     float a=dot(r.v,r.v);
-    float b=dot(oc,r.v)*2.;
+	float b=dot(oc,r.v)*2.;
     float c=dot(oc,oc)-(s.r*s.r);
     float delta=b*b-4.*a*c;
-    if(delta<0.)return-1.;
+    if(delta<0.) return-1.;
     else
     {
         float t1=(-b-sqrt(delta))/(2.*a);
@@ -109,7 +124,7 @@ float intersectSphere(inout Ray r,Sphere s){
     }
 }
 
-// Intersection avec un Plan ==================================================
+// Intersection avec un Plan ===================================================================================================
 float intersectPlan(inout Ray r,Plan p){
     float d=-dot(p.pos,p.N);
     float v=dot(r.v,p.N);
@@ -119,9 +134,10 @@ float intersectPlan(inout Ray r,Plan p){
 }
 
 
-//verification de la presence d'objets entre le point d'impact et la source lumineuse
+//verification de la presence d'objets entre le point d'impact et la source lumineuse ===========================================
 bool verifOmbre(in Ray retourRayon,in Sphere sphereTab[nbSphere],in Plan planTab[nbPlan]){
     float tS,tP;
+
     for(int j=0;j<nbSphere;j++)
     {
         tS=intersectSphere(retourRayon,sphereTab[j]);
@@ -140,11 +156,9 @@ bool verifOmbre(in Ray retourRayon,in Sphere sphereTab[nbSphere],in Plan planTab
     
 }
 
-// Calcul de l'eclairage , construction d'un rayon de retour pour l'envoyer à la fonction verifOmbre() =====================================
+// Calcul de l'eclairage , construction d'un rayon de retour pour l'envoyer à la fonction verifOmbre() ============================
 void eclairage(inout vec3 phongvar,in Ray r,in Source sourceTab[nbSource],in Sphere sphereTab[nbSphere],in Plan planTab[nbPlan]){
-    Ray retourRayon;bool ombre;
-    float tS;float tP;
-    vec3 newPhong;
+    Ray retourRayon;bool ombre;float tS;float tP;vec3 newPhong;
     for(int i=0;i<nbSource;i++)
     {
         retourRayon.o=r.impactPoint+.25*r.N;
@@ -159,7 +173,7 @@ void eclairage(inout vec3 phongvar,in Ray r,in Source sourceTab[nbSource],in Sph
     }
 }
 
-//  ==================================================
+//  Donne aux rayons les propriétés de l'objet qu'il touche ==========================================================================
 void setRay(inout Ray r,float t,vec3 centerObj,Material matObj){
     r.t=t;
     r.toucheObjet=1.;
@@ -168,7 +182,7 @@ void setRay(inout Ray r,float t,vec3 centerObj,Material matObj){
     r.mat=matObj;
 }
 
-//==================================================
+//===================================================================================================================================
 vec4 intersect(inout Ray r,in Sphere sphereTab[nbSphere],in Plan planTab[nbPlan],in Source sourceTab[nbSource]){
     float tP,tS;vec3 phongvar;
     for(int i=0;i<nbPlan;i++){
@@ -187,7 +201,7 @@ vec4 intersect(inout Ray r,in Sphere sphereTab[nbSphere],in Plan planTab[nbPlan]
     return vec4(phongvar*r.mat.color,1.);
 }
 
-//==================================================
+//======================================================================================================================================
 void main(void){
     vec3 color1=vec3(0.,0.,0.);
     Material material1=Material(ks,kd,n,color1);
